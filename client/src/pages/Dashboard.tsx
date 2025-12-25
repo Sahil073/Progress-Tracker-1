@@ -22,8 +22,25 @@ export default function Dashboard() {
 
   const [importMode, setImportMode] = useState<"none" | "excel" | "github">("none");
   const [githubUrl, setGithubUrl] = useState("");
+  const [userName, setUserName] = useState(() => localStorage.getItem("userName") || "");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const quotes = [
+    "Keep pushing, {name}! You're doing great.",
+    "Consistency is key, {name}!",
+    "One question at a time, {name}.",
+    "Build your future today, {name}!",
+    "Success is a journey, not a destination, {name}."
+  ];
+
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)].replace("{name}", userName || "Champion");
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.value;
+    setUserName(name);
+    localStorage.setItem("userName", name);
+  };
 
   const excelMutation = useParseExcel();
   const githubMutation = useParseGithub();
@@ -99,12 +116,35 @@ export default function Dashboard() {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="container max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-              <CheckCircle2 className="w-5 h-5" />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl font-bold font-display tracking-tight hidden sm:block">SheetTracker</h1>
             </div>
-            <h1 className="text-xl font-bold font-display tracking-tight">SheetTracker</h1>
+            
+            <div className="flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1 border border-border/50">
+              <input
+                type="text"
+                value={userName}
+                onChange={handleNameChange}
+                placeholder="Your Name"
+                className="bg-transparent border-none text-sm focus:ring-0 w-24 sm:w-32 placeholder:text-muted-foreground/50 font-medium"
+              />
+            </div>
           </div>
+
+          <div className="flex-1 px-4 hidden md:flex justify-center">
+            <motion.p 
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-sm font-medium text-muted-foreground italic truncate"
+            >
+              "{randomQuote}"
+            </motion.p>
+          </div>
+
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col items-end mr-2">
               <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Progress</span>
@@ -255,6 +295,45 @@ export default function Dashboard() {
           />
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border mt-12 bg-muted/30">
+        <div className="container max-w-5xl mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-primary" />
+              <span className="font-bold font-display">SheetTracker</span>
+            </div>
+            
+            <p className="text-sm text-muted-foreground text-center">
+              Made with love by <span className="font-semibold text-foreground">SahilChaudhary</span>
+            </p>
+
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://github.com/Sahil073" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all"
+                title="GitHub"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://www.linkedin.com/in/sahil--chaudhary?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all"
+                title="LinkedIn"
+              >
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

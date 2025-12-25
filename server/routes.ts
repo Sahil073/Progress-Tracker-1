@@ -58,7 +58,8 @@ export async function registerRoutes(
       if (url.includes('github.com') && !url.includes('raw.githubusercontent.com')) {
         rawUrl = url
           .replace('github.com', 'raw.githubusercontent.com')
-          .replace('/blob/', '/');
+          .replace('/blob/', '/')
+          .replace('/tree/', '/');
       }
 
       const response = await fetch(rawUrl);
